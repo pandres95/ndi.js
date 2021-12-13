@@ -8,12 +8,12 @@ void SendVideoSource::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod<&SendVideoSource::Destroy>("destroy"),
     });
 
-    Napi::FunctionReference* constructor = new Napi::FunctionReference();
+    // Napi::FunctionReference* constructor = new Napi::FunctionReference();
 
     // Create a persistent reference to the class constructor. This will allow
     // a function called on a class prototype and a function
     // called on instance of a class to be distinguished from each other.
-    *constructor = Napi::Persistent(func);
+    // *constructor = Napi::Persistent(func);
     exports.Set("SendVideoSource", func);
 
     // Store the constructor as the add-on instance data. This will allow this
