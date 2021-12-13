@@ -4,13 +4,13 @@
 
 This library intends to be a Node.js wrapper for NDI v5 (and following) library.
 
-
 ## Features
 
+- [x] Creating Sources
 
 ## Roadmap
 
-- [ ] Creating Sources
+
 - [ ] Sending Audio Streams
 - [ ] Sending Video Streams
 - [ ] Sending Audio/Video Streams
@@ -25,7 +25,7 @@ Install my-project with npm
   npm install my-project
   cd my-project
 ```
-    
+
 ## Run Locally
 
 Clone the project
