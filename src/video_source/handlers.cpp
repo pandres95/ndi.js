@@ -84,18 +84,7 @@ void SendVideoSource::Initialize(const Napi::CallbackInfo &info)
     }
 }
 
-void SendVideoSource::DoDestroy()
-{
-    if (this->sendInstance != NULL)
-        NDIlib_send_destroy(this->sendInstance);
-}
-
-void SendVideoSource::Destroy(const Napi::CallbackInfo &info)
-{
-    this->DoDestroy();
-}
-
 SendVideoSource::~SendVideoSource()
 {
-    this->DoDestroy();
+    NDIlib_send_destroy(this->sendInstance);
 }

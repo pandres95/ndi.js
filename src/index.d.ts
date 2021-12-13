@@ -54,5 +54,4 @@ export interface SendVideoInitParameters {
 export class SendVideoSource {
   initialize(initParameters: SendVideoInitParameters): void;
   send(sourceBuffer: Buffer): void;
-  destroy(): void;
 }

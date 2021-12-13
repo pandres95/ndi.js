@@ -13,11 +13,9 @@ public:
     ~SendVideoSource();
 
     void Initialize(const Napi::CallbackInfo& info);
-    void Destroy(const Napi::CallbackInfo& info);
     void Send(const Napi::CallbackInfo& info);
 private:
     NDIlib_send_instance_t sendInstance;
-    void DoDestroy();
 };
 
 #endif

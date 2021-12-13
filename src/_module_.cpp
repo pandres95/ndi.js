@@ -5,7 +5,7 @@ void SendVideoSource::Init(Napi::Env env, Napi::Object exports)
     // This method is used to hook the accessor and method callbacks
     Napi::Function func = DefineClass(env, "SendVideoSource", {
         InstanceMethod<&SendVideoSource::Initialize>("initialize"),
-        InstanceMethod<&SendVideoSource::Destroy>("destroy"),
+        InstanceMethod<&SendVideoSource::Send>("send"),
     });
 
     // Napi::FunctionReference* constructor = new Napi::FunctionReference();
