@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "lldb",
+            "request": "launch",
+            "program": "/usr/local/bin/node",
+            "args": [
+                "--experimental-specifier-resolution=node",
+                "${workspaceFolder}/test/ndi_create_source.js"
+            ]
+        }
+    ]
+}

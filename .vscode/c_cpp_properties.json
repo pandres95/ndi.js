@@ -1,0 +1,24 @@
+{
+    "env": {
+        "defaultIncludePath": [
+            "${workspaceFolder}",
+            "${workspaceFolder}/include"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${defaultIncludePath}",
+                "${workspaceFolder}/.vendor/ndi/include",
+                "${workspaceFolder}/.vendor/node-gyp/include/node",
+                "${workspaceFolder}/node_modules/node-addon-api",
+            ],
+            "intelliSenseMode": "macos-clang-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++98"
+        }
+    ],
+    "version": 4
+}
