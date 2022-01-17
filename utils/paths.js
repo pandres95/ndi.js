@@ -14,10 +14,11 @@ function exportNDIPaths() {
     } = process.env;
 
     ensureSymlinkSync(join(NDI_SDK_DIR, 'include'), join(DIR_NAME, 'include'));
-    ensureSymlinkSync(join(NDI_SDK_DIR, dirname(NDI_SDK_LIB)), join(DIR_NAME, 'lib'));
+    ensureSymlinkSync(join(NDI_SDK_DIR, NDI_SDK_LIB), join(DIR_NAME, 'lib'));
 
     return {
         dir: DIR_NAME,
+        lib_dir: join(DIR_NAME, 'lib'),
         include_dir: join(DIR_NAME, 'include')
     };
 }

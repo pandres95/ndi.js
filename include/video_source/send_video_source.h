@@ -1,5 +1,5 @@
 #include <napi.h>
-#include <Processing.NDI.Advanced.h>
+#include <Processing.NDI.Lib.h>
 
 #ifndef _VIDEO_SOURCE_H_
 #define _VIDEO_SOURCE_H_
