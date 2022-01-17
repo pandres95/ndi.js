@@ -4,61 +4,72 @@
 
 This library intends to be a Node.js wrapper for NDI v5 (and following) library.
 
-
 ## Features
 
+- Send API
+  - [x] Creating Send Instance
+  - [x] Sending Video Streams
 
 ## Roadmap
 
-- [ ] Creating Sources
-- [ ] Sending Audio Streams
-- [ ] Sending Video Streams
-- [ ] Sending Audio/Video Streams
-- [ ] Listing Sources
-- [ ] Receiving and Decoding Streams
+- Find API
+  - [ ] Listing Sources
+- Send API
+  - [ ] Sending Audio Streams
+  - [ ] Sending Audio/Video Streams
+  - [ ] Sending Metadata
+  - [ ] Receiving Tally
+- Recv API
+  - [ ] Receiving Video Streams
+  - [ ] Receiving Audio Streams
+  - [ ] Receiving Metadata
+  - [ ] Setting Tally
 
 ## Installation
 
-Install my-project with npm
+Install `ndi.js` with npm
 
 ```bash
-  npm install my-project
+  npm install ndi.js
+```
+
+
+## Usage
+
+> TODO: Document usage and examples
+
+
+## Development
+
+### Run Locally
+
+1. Clone the project.
+2. Go to the project directory
+
+```bash
   cd my-project
 ```
-    
-## Run Locally
 
-Clone the project
-
-```bash
-  git clone https://link-to-project
-```
-
-Go to the project directory
-
-```bash
-  cd my-project
-```
-
-Install dependencies
+3. Install dependencies
 
 ```bash
   npm install
 ```
 
-Start the server
+4. Run the sample CLI
 
 ```bash
-  npm run start
+  ./bin
+  ./ndi.js random
 ```
 
 
-## Running Tests
+### Running Tests
 
 To run tests, run the following command
 
 ```bash
-  npm run test
+  npm test
 ```
 
 

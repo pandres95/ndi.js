@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "Launch Test CLI",
+            "type": "lldb",
+            "request": "launch",
+            "program": "node",
+            "args": [
+                "--experimental-specifier-resolution=node",
+                "${workspaceFolder}/bin/ndi.js",
+                "random"
+            ]
+        }
+    ]
+}

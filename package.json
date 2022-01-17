@@ -1,0 +1,50 @@
+{
+  "name": "ndi.js",
+  "version": "1.0.0",
+  "description": "Wrapper library for NDI",
+  "type": "module",
+  "main": "src/index.js",
+  "typings": "src/index.d.ts",
+  "scripts": {
+    "clean": "node-pre-gyp clean",
+    "test": "jest",
+    "install": "node-pre-gyp install --fallback-to-build",
+    "configure": "node-pre-gyp configure",
+    "build": "node-pre-gyp build",
+    "rebuild": "node-pre-gyp rebuild",
+    "prepublishOnly": "node-pre-gyp package testpackage publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/pandres95/ndi.js.git"
+  },
+  "keywords": [
+    "NDI"
+  ],
+  "author": "Pablo Dorado <hola@pablodorado.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pandres95/ndi.js/issues"
+  },
+  "gypfile": true,
+  "binary": {
+    "module_name": "ndi",
+    "module_path": "./build/{configuration}/",
+    "remote_path": "./{module_name}/v{version}/{configuration}/",
+    "package_name": "{platform}-{arch}.tar.gz",
+    "host": "https://ndijs.s3.us-east-2.amazonaws.com"
+  },
+  "homepage": "https://github.com/pandres95/ndi.js#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.1048.0",
+    "dotenv": "^10.0.0",
+    "fs-extra": "^10.0.0",
+    "jest": "^27.3.1",
+    "node-addon-api": "^4.2.0",
+    "node-gyp": "^8.4.1"
+  },
+  "dependencies": {
+    "@mapbox/node-pre-gyp": "^1.0.8",
+    "bindings": "^1.5.0"
+  }
+}

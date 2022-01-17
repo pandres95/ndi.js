@@ -1,0 +1,6 @@
+.DS_Store
+.env
+.vendor
+
+node_modules/
+build/
