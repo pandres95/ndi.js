@@ -3,12 +3,14 @@
         {
             "target_name": "<(module_name)",
             "cflags!": ["-fno-exceptions"],
+            "cflags+": ["-fexceptions"],
             "cflags_cc!": ["-fno-exceptions"],
+            "cflags_cc+": ["-fexceptions"],
             "sources": [
                 "src/ndi.cpp",
-                "src/video_source/handlers.cpp",
-                "src/video_source/incoming_video.cpp",
-                "src/video_source/send_video_source.cpp"
+                "src/send/operator_incoming_video.cpp",
+                "src/send/operator_send_instance_init_params.cpp",
+                "src/send/send_instance.cpp",
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include_dir\")",
@@ -31,7 +33,10 @@
                                  "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.dylib",
                              ]
                          }
-                     ]
+                     ],
+                     'xcode_settings': {
+                        'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                     }
                  }
                  ],
                 ["OS==\"linux\"",
@@ -66,7 +71,7 @@
                     "-lndi"
                 ],
             },
-            "defines": ['NAPI_DISABLE_CPP_EXCEPTIONS']
+            "defines": ['NAPI_CPP_EXCEPTIONS']
         }
     ]
 }

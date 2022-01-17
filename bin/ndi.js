@@ -3,7 +3,7 @@
 import { isAbsolute, resolve } from 'path';
 
 import ProgressBar from 'progress';
-import { SendVideoSource } from '../src';
+import { SendInstance } from '../src';
 import UVC from 'uvc';
 import { VideoCapture } from 'camera-capture';
 import callback from 'callback-stream';
@@ -19,13 +19,13 @@ const {
 
 async function main() {
     const processAction = (action) => (args, options, command) => {
-        let sendVideoSource = new SendVideoSource();
-        sendVideoSource.initialize({
+        let sendInstance = new SendInstance();
+        sendInstance.initialize({
             name: options.sourceName ?? 'my dummy video source name',
         });
 
         console.log(command);
-        action(sendVideoSource, args, options, command);
+        action(sendInstance, args, options, command);
     }
 
     await program.version('0.0.1')
@@ -53,10 +53,10 @@ async function main() {
 
 /**
  *
- * @param {import('../src').SendVideoSource} sendVideoSource
+ * @param {import('../src').SendInstance} sendInstance
  * @param {number} timeout
  */
-async function randomSignalTest(sendVideoSource, timeout = 5, options) {
+async function randomSignalTest(sendInstance, timeout = 5, options) {
     const randomRGBAFrame = (width, height) =>
         Array.from(Array(height * width * 4),
             (_, k) => k % 4 === 3 ? 255 : Math.round(255 * Math.random())
@@ -83,7 +83,7 @@ async function randomSignalTest(sendVideoSource, timeout = 5, options) {
     let count = 0;
     while (count < timeout) {
         const start = Date.now();
-        sendVideoSource.send({
+        sendInstance.send({
             width,
             height,
             colourSpace: 10 /* VideoColourSpace.RGBA */,
@@ -100,9 +100,9 @@ async function randomSignalTest(sendVideoSource, timeout = 5, options) {
 
 /**
  *
- * @param {import('../src').SendVideoSource} sendVideoSource
+ * @param {import('../src').SendInstance} sendInstance
  */
-async function webcamSignalTest(sendVideoSource) {
+async function webcamSignalTest(sendInstance) {
     /** @type {import('camera-capture').CaptureOptions} */
     const captureOptions = {
         width: 1280,
@@ -124,7 +124,7 @@ async function webcamSignalTest(sendVideoSource) {
             .raw()
             .toBuffer();
 
-        // sendVideoSource.send({
+        // sendInstance.send({
         //     width,
         //     height,
         //     colourSpace: 10 /* VideoColourSpace.RGBA */,
@@ -141,9 +141,9 @@ async function webcamSignalTest(sendVideoSource) {
 
 /**
  *
- * @param {import('../src').SendVideoSource} sendVideoSource
+ * @param {import('../src').SendInstance} sendInstance
  */
-async function webcamUVCSignalTest(sendVideoSource) {
+async function webcamUVCSignalTest(sendInstance) {
     const libuvc = new LibUvc();
     await libuvc.initialize();
 
@@ -213,10 +213,10 @@ async function webcamUVCSignalTest(sendVideoSource) {
 
 /**
  * Sends a video signal over
- * @param {import('../src').SendVideoSource} sendVideoSource
+ * @param {import('../src').SendInstance} sendInstance
  * @param {string} inputPath
  */
-async function ogvSignalTest(sendVideoSource, inputPath) {
+async function ogvSignalTest(sendInstance, inputPath) {
     const path = isAbsolute(inputPath)
         ? inputPath
         : resolve(cwd(), inputPath);

@@ -1,4 +1,4 @@
-#include <video_source/incoming_video.h>
+#include <send/incoming_video.h>
 
 IncomingVideo::IncomingVideo(Napi::Object object) : width(object.Get("width").ToNumber()),
                                                                 height(object.Get("height").ToNumber()),

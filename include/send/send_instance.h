@@ -4,18 +4,18 @@
 #ifndef _VIDEO_SOURCE_H_
 #define _VIDEO_SOURCE_H_
 
-class SendVideoSource : public Napi::ObjectWrap<SendVideoSource>
+class SendInstance : public Napi::ObjectWrap<SendInstance>
 {
 public:
     static void Init(Napi::Env env, Napi::Object exports);
 
-    SendVideoSource(const Napi::CallbackInfo& info);
-    ~SendVideoSource();
+    SendInstance(const Napi::CallbackInfo& info);
+    ~SendInstance();
 
     void Initialize(const Napi::CallbackInfo& info);
     void Send(const Napi::CallbackInfo& info);
 private:
-    NDIlib_send_instance_t sendInstance;
+    NDIlib_send_instance_t ndiSendInstance;
 };
 
 #endif

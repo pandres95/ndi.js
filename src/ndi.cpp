@@ -7,7 +7,7 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
             .ThrowAsJavaScriptException();
     }
 
-    SendVideoSource::Init(env, Napi::Value(env, exports).As<Napi::Object>());
+    SendInstance::Init(env, Napi::Value(env, exports).As<Napi::Object>());
 
     napi_status status = napi_add_env_cleanup_hook(env, onDestroyEnvironment, exports);
     assert(status == napi_ok);
@@ -15,15 +15,15 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-void SendVideoSource::Init(Napi::Env env, Napi::Object exports)
+void SendInstance::Init(Napi::Env env, Napi::Object exports)
 {
     // This method is used to hook the accessor and method callbacks
-    Napi::Function func = DefineClass(env, "SendVideoSource", {
-        InstanceMethod<&SendVideoSource::Initialize>("initialize"),
-        InstanceMethod<&SendVideoSource::Send>("send"),
+    Napi::Function func = DefineClass(env, "SendInstance", {
+        InstanceMethod<&SendInstance::Initialize>("initialize"),
+        InstanceMethod<&SendInstance::Send>("send"),
     });
 
-    exports.Set("SendVideoSource", func);
+    exports.Set("SendInstance", func);
 }
 
 static void onDestroyEnvironment(void *arg)

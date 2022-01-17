@@ -2,8 +2,8 @@ import bindings from 'bindings';
 const addon = bindings('ndi');
 
 /**
- * @type {import('./index').SendVideoSource}
+ * @type {import('./index').SendInstance}
  */
-const SendVideoSource = addon.SendVideoSource;
+const SendInstance = addon.SendInstance;
 
-export { SendVideoSource };
+export { SendInstance };
