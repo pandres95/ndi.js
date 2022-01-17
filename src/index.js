@@ -1,5 +1,4 @@
 import bindings from 'bindings';
-
 const addon = bindings('ndi');
 
 /**
