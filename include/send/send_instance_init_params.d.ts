@@ -5,14 +5,6 @@ export interface SendInstanceInitParameters {
   name: string;
 
   /**
-   * A list of tags.
-   *
-   * These will be used for a NDI client to group video sources
-   * into groups labelled as such.
-   */
-  groups?: string[];
-
-  /**
    * Whether the video of this source should be "clocked".
    *
    * When it is, video frames added will be rate-limited to match the current framerate they

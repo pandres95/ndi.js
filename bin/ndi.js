@@ -18,13 +18,12 @@ const {
 } = UVC;
 
 async function main() {
-    const processAction = (action) => (args, options, command) => {
+    const processAction = (action) => (args, options, /** @type {import('commander').Command} */ command) => {
         let sendInstance = new SendInstance();
         sendInstance.initialize({
-            name: options.sourceName ?? 'my dummy video source name',
+            name: options.sourceName ?? `ndi.js ${command.name()}`
         });
 
-        console.log(command);
         action(sendInstance, args, options, command);
     }
 

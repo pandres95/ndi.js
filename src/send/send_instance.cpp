@@ -30,12 +30,10 @@ void SendInstance::Initialize(const Napi::CallbackInfo &info)
 
         if (!this->ndiSendInstance)
         {
-            Napi::Error::New(info.Env(), "Could not initialize the instance")
-                .ThrowAsJavaScriptException();
+            throw Napi::Error::New(info.Env(), "Could not initialize the instance");
         }
-    } catch (const char* error) {
-        Napi::TypeError::New(info.Env(), error)
-            .ThrowAsJavaScriptException();
+    } catch (Napi::Error error) {
+        error.ThrowAsJavaScriptException();
     }
 }
 
