@@ -1,4 +1,4 @@
-export interface IncomingVideo {
+export interface IncomingVideoParameters {
   height: number;
   width: number;
 

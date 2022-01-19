@@ -1,11 +1,12 @@
 #include <send/incoming_video.h>
 
-IncomingVideo::IncomingVideo(Napi::Object object) : width(object.Get("width").ToNumber()),
+IncomingVideoParameters::IncomingVideoParameters(const Napi::Object &object) : width(object.Get("width").ToNumber()),
                                                                 height(object.Get("height").ToNumber()),
                                                                 colourSpace(object.Get("colourSpace").ToNumber()),
-                                                                framerate(object.Get("framerate").ToNumber()) {}
+                                                                framerate(object.Get("framerate").ToNumber()),
+                                                                frames(object.Get("frames").As<Napi::Array>()) {}
 
-IncomingVideo::operator NDIlib_video_frame_v2_t() const
+IncomingVideoParameters::operator NDIlib_video_frame_v2_t() const
 {
     NDIlib_video_frame_v2_t out;
 
