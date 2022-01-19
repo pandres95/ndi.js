@@ -1,7 +1,11 @@
-#include <send/send_instance.h>
+#include <iostream>
 
-#include <send/incoming_video.h>
+#include <send/send_instance.h>
 #include <send/send_instance_init_params.h>
+#include <send/incoming_audio.h>
+#include <send/incoming_video.h>
+
+using namespace std;
 
 SendInstance::SendInstance(const Napi::CallbackInfo &info) : Napi::ObjectWrap<SendInstance>(info) {}
 
@@ -39,18 +43,63 @@ void SendInstance::Initialize(const Napi::CallbackInfo &info)
 
 void SendInstance::Send(const Napi::CallbackInfo &info)
 {
-    Napi::Object incomingVideoParameters = info[0].As<Napi::Object>();
-    NDIlib_video_frame_v2_t NDI_video_frame = IncomingVideo(incomingVideoParameters);
+    IncomingVideoParameters incomingVideoParameters = info[0].As<Napi::Object>();
+    IncomingAudioParameters* incomingAudioParameters = NULL;
 
-    Napi::Array frames = incomingVideoParameters.Get("frames").As<Napi::Array>();
+    if (info.Length() == 2) {
+        IncomingAudioParameters params = info[1].As<Napi::Object>();
+        incomingAudioParameters = &params;
+    }
 
-    for (uint32_t idx = 0; idx < frames.Length(); idx++)
+    NDIlib_video_frame_v2_t videoFrame = incomingVideoParameters;
+    NDIlib_audio_frame_v2_t audioFrame = NULL;
+
+    if (incomingAudioParameters != NULL) {
+        incomingAudioParameters->framerate_N = videoFrame.frame_rate_N;
+        incomingAudioParameters->framerate_D = videoFrame.frame_rate_D;
+
+        audioFrame = *incomingAudioParameters;
+    }
+
+    for (uint32_t idx = 0; idx < incomingVideoParameters.frames.Length(); idx++)
     {
-        Napi::Buffer<uint8_t> buffer = frames.Get(idx).As<Napi::Buffer<uint8_t> >();
+        cout << incomingAudioParameters->frames.Length() << " audio frames" << endl; // TODO: Delete this log
+
+        if (incomingAudioParameters != NULL) {
+            audioFrame.p_data = (float*) malloc(audioFrame.no_channels * audioFrame.channel_stride_in_bytes);
+            Napi::Array frame = incomingAudioParameters->frames.Get(idx).As<Napi::Array>();
+
+            cout << frame.Length() << " channels on frame" << idx << endl; // TODO: Delete this log
+
+            for (int channel = 0; channel < incomingAudioParameters->channelsNumber; channel++) {
+                Napi::Float32Array channelData = frame.Get(channel).As<Napi::Float32Array>();
+
+                cout << audioFrame.no_samples << " audio samples on channel" << channel + 1 << endl; // TODO: Delete this log
+
+                float* buffer = channelData.Data();
+
+                cout << "Buffer example: "; // TODO: Delete this log
+                for (int i = 0; i < 20; i++) { cout << buffer[i] << " "; } // TODO: Delete this log
+                cout << endl << endl; // TODO: Delete this log
+
+                // Get the pointer to the start of this channel
+                float* p_ch = (float*)((uint8_t*)audioFrame.p_data + (channel * audioFrame.channel_stride_in_bytes));
+
+                // Fill it with silence
+                for (int sample_no = 0; sample_no < audioFrame.no_samples; sample_no++)
+                    p_ch[sample_no] = buffer[sample_no];
+            }
+
+            NDIlib_send_send_audio_v2(this->ndiSendInstance, &audioFrame);
+            free(audioFrame.p_data);
+        }
+
+        Napi::Buffer<uint8_t> buffer = incomingVideoParameters.frames
+            .Get(idx).As<Napi::Buffer<uint8_t> >();
         uint8_t *buffer_data = buffer.Data();
 
-        NDI_video_frame.p_data = buffer_data;
-        NDIlib_send_send_video_async_v2(this->ndiSendInstance, &NDI_video_frame);
+        videoFrame.p_data = buffer_data;
+        NDIlib_send_send_video_async_v2(this->ndiSendInstance, &videoFrame);
     }
 }
 
