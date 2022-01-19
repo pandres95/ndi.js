@@ -1,3 +1,4 @@
+#include <cassert>
 #include <ndi.h>
 
 static Napi::Object Init(Napi::Env env, Napi::Object exports) {
