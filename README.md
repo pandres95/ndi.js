@@ -9,14 +9,14 @@ This library intends to be a Node.js wrapper for NDI v5 (and following) library.
 - Send API
   - [x] Creating Send Instance
   - [x] Sending Video Streams
+  - [x] Sending Audio Streams
+  - [x] Sending Audio/Video Streams
 
 ## Roadmap
 
 - Find API
   - [ ] Listing Sources
 - Send API
-  - [ ] Sending Audio Streams
-  - [ ] Sending Audio/Video Streams
   - [ ] Sending Metadata
   - [ ] Receiving Tally
 - Recv API
