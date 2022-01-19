@@ -8,6 +8,7 @@
             "cflags_cc+": ["-fexceptions"],
             "sources": [
                 "src/ndi.cpp",
+                "src/send/operator_incoming_audio.cpp",
                 "src/send/operator_incoming_video.cpp",
                 "src/send/operator_send_instance_init_params.cpp",
                 "src/send/send_instance.cpp",

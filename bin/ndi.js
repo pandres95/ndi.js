@@ -18,13 +18,12 @@ const {
 } = UVC;
 
 async function main() {
-    const processAction = (action) => (args, options, command) => {
+    const processAction = (action) => (args, options, /** @type {import('commander').Command} */ command) => {
         let sendInstance = new SendInstance();
         sendInstance.initialize({
-            name: options.sourceName ?? 'my dummy video source name',
+            name: options.sourceName ?? `ndi.js ${command.name()}`
         });
 
-        console.log(command);
         action(sendInstance, args, options, command);
     }
 
@@ -32,8 +31,11 @@ async function main() {
         .option('-s, --source-name', 'video source name')
         .addCommand(createCommand('random')
             .description('Sends a random video signal')
-            .argument('[seconds]', 'The number of seconds to send out the signal', 5)
-            .option('-f --frames', 'Number of frames per second', 60)
+            .argument('[seconds]', 'The number of seconds to send out the signal', '5')
+            .option('-f, --frames <frames>', 'Number of frames per second', '60')
+            .option('-A, --no-audio', 'Should it include audio?')
+            .option('-c, --channels <channels>', 'Number of channels', '2')
+            .option('-r, --sample-rate <sampleRate>', 'Number of channels', '48000')
             .action(processAction(randomSignalTest))
         )
         .addCommand(createCommand('webcam')
@@ -57,27 +59,69 @@ async function main() {
  * @param {number} timeout
  */
 async function randomSignalTest(sendInstance, timeout = 5, options) {
-    const randomRGBAFrame = (width, height) =>
+    const sineWaveFLTAudioFrame = (frequency = 440, sampleRate = 48000) =>
+        Float32Array.from(Array(sampleRate), (_, i) => Math.sin(Math.PI * i / frequency));
+    const randomRGBAVideoFrame = (width, height) =>
         Array.from(Array(height * width * 4),
             (_, k) => k % 4 === 3 ? 255 : Math.round(255 * Math.random())
         );
+    const framerateTable = {
+        24: 1, /* VideoFramerate.F24 */
+        24.98: 2, /* VideoFramerate.F2498 */
+        25: 3, /* VideoFramerate.F25 */
+        29.97: 4, /* VideoFramerate.F2997 */
+        30: 5, /* VideoFramerate.F30 */
+        50: 6, /* VideoFramerate.F50 */
+        59.94: 7, /* VideoFramerate.F5994 */
+        60: 8, /* VideoFramerate.F60 */
+    };
 
+
+    // Setup random video data
     const width = 1920;
     const height = 1080;
 
-    console.log(options);
     const fps = Number(options?.frames ?? 60);
 
-    const bar = new ProgressBar(':bar :current/:total', { total: fps });
-    bar.render();
+    console.log('Creating video frames');
+    const videoProgressBar = new ProgressBar(':bar :current/:total', { total: fps });
+    videoProgressBar.render();
 
-    const frames = Array.from(Array(fps), () => {
-        bar.tick(1);
-        return Buffer.from(randomRGBAFrame(height, width));
+    const videoFrames = Array.from(Array(fps), () => {
+        videoProgressBar.tick(1);
+        return Buffer.from(randomRGBAVideoFrame(height, width));
     });
 
-    bar.terminate();
+    videoProgressBar.terminate();
 
+
+    // Setup random audio data
+    const channels = Number(options?.channels ?? 2);
+    const sampleRate = Number(options?.sampleRate ?? 48_000);
+
+    let audioFrames = [];
+    if (options.audio) {
+        console.log('Creating audio frames');
+        /**
+         * 523.25Hz (C5) tuned sine wave
+         */
+        const s440Frame = sineWaveFLTAudioFrame(130.81, sampleRate);
+        const samplesInFrame = Math.ceil(sampleRate / fps);
+
+        const audioProgressBar = new ProgressBar(':bar :current/:total', { total: fps });
+        audioProgressBar.render();
+
+        audioFrames = Array.from(Array(fps), (_, frame) => {
+            audioProgressBar.tick(1);
+
+            return Array.from(Array(channels), (_, ch) => s440Frame.slice(frame * samplesInFrame, (frame + 1) * samplesInFrame - 1).map(k => k * ((-1) ** ch)));
+        });
+
+        audioProgressBar.terminate();
+    }
+
+
+    // Start broadcasting
     const start = Date.now();
 
     let count = 0;
@@ -87,10 +131,14 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
             width,
             height,
             colourSpace: 10 /* VideoColourSpace.RGBA */,
-            framerate: 8 /* VideoFramerate.F60 */,
-            frames
-        });
-        console.log(`Sent 60 frames of video in ${Date.now() - start}ms`);
+            framerate: framerateTable[fps],
+            frames: videoFrames
+        }, options.audio ? {
+            channels,
+            sampleRate,
+            frames: audioFrames
+        } : undefined);
+        console.log(`Sent ${fps} frames of video in ${Date.now() - start}ms`);
 
         count++;
     }

@@ -8,8 +8,25 @@
             "args": [
                 "--experimental-specifier-resolution=node",
                 "${workspaceFolder}/bin/ndi.js",
-                "random"
+                "random",
+                "-f",
+                "${input:frames}",
+                "${input:timeout}"
             ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "frames",
+            "type": "promptString",
+            "default": "60",
+            "description": "Enter framerate"
+        },
+        {
+            "id": "timeout",
+            "type": "promptString",
+            "default": "15",
+            "description": "Enter number of seconds to broadcast signal"
         }
     ]
 }

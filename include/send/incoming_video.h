@@ -4,16 +4,18 @@
 #ifndef _SRC_INCOMING_BUFFERS_H_
 #define _SRC_INCOMING_BUFFERS_H_
 
-class IncomingVideo
+class IncomingVideoParameters
 {
 public:
-    IncomingVideo(Napi::Object);
+    IncomingVideoParameters(const Napi::Object&);
 
     int width;
     int height;
 
     int colourSpace;
     int framerate;
+
+    Napi::Array frames;
 
     operator NDIlib_video_frame_v2_t() const;
 };
