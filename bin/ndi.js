@@ -1,10 +1,10 @@
-#! /usr/bin/env node --experimental-specifier-resolution=node
+#! /usr/local/bin/node --experimental-specifier-resolution=node
 
 import { isAbsolute, resolve } from "path";
 
 import ProgressBar from "progress";
 import { SendInstance } from "../src";
-// import UVC from "uvc";
+import UVC from "uvc";
 import { VideoCapture } from "camera-capture";
 import callback from "callback-stream";
 import commander from "commander";
@@ -13,12 +13,18 @@ import prompts from "prompts";
 import sharp from "sharp";
 
 const { createCommand, program } = commander;
-// const { Context, Controls, FrameStreamer, LibUvc } = UVC;
+const { Context, Controls, FrameStreamer, LibUvc } = UVC;
 
 async function main() {
   const processAction =
     (action) =>
     (args, options, /** @type {import('commander').Command} */ command) => {
+      if (command == undefined) {
+        command = options;
+        options = args;
+        args = undefined;
+      }
+
       let sendInstance = new SendInstance();
       sendInstance.initialize({
         name: options.sourceName ?? `ndi.js ${command.name()}`,
@@ -39,14 +45,19 @@ async function main() {
           "5"
         )
         .option("-f, --frames <frames>", "Number of frames per second", "60")
-        .option("-A, --no-audio", "Should it include audio?")
+        .option("-w, --width <width>", "Width of video sample", "1920")
+        .option("-h, --height <height>", "Height of video sample", "1080")
+        .option("-a, --audio", "Include audio", true)
+        .option("-A, --no-audio", "Disable audio")
         .option("-c, --channels <channels>", "Number of channels", "2")
         .option("-r, --sample-rate <sampleRate>", "Number of channels", "48000")
         .action(processAction(randomSignalTest))
     )
     .addCommand(createCommand("webcam").action(processAction(webcamSignalTest)))
     .addCommand(
-      createCommand("webcam-uvc").action(processAction(webcamUVCSignalTest))
+      createCommand("uvc").action(processAction(uvcSignalTest))
+        .description('Sends a UVC device stream')
+        .option('-A, --no-audio', 'Disable audio')
     )
     .addCommand(
       createCommand("ogv")
@@ -67,9 +78,9 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
     Float32Array.from(Array(sampleRate), (_, i) =>
       Math.sin((Math.PI * i) / frequency)
     );
-  const randomRGBAVideoFrame = (width, height) =>
-    Array.from(Array(height * width * 4), (_, k) =>
-      k % 4 === 3 ? 255 : Math.round(255 * Math.random())
+  const randomRGBXVideoFrame = (width, height) =>
+    Array.from(Array(height * width * 3), (_, k) =>
+      Math.round(255 * Math.random())
     );
   const framerateTable = {
     24: 1 /* VideoFramerate.F24 */,
@@ -83,8 +94,8 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   };
 
   // Setup random video data
-  const width = 1920;
-  const height = 1080;
+  const width = Number(options?.width ?? 1920);
+  const height = Number(options?.width ?? 1080);
 
   const fps = Number(options?.frames ?? 60);
 
@@ -95,8 +106,9 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   videoProgressBar.render();
 
   const videoFrames = Array.from(Array(fps), () => {
+    const frame = Buffer.from(randomRGBXVideoFrame(height, width));
     videoProgressBar.tick(1);
-    return Buffer.from(randomRGBAVideoFrame(height, width));
+    return frame;
   });
 
   videoProgressBar.terminate();
@@ -105,6 +117,7 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   const channels = Number(options?.channels ?? 2);
   const sampleRate = Number(options?.sampleRate ?? 48_000);
 
+  /** @type {Float32Array[][]} */
   let audioFrames = [];
   if (options.audio) {
     console.log("Creating audio frames");
@@ -113,6 +126,7 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
      */
     const s440Frame = sineWaveFLTAudioFrame(130.81, sampleRate);
     const samplesInFrame = Math.ceil(sampleRate / fps);
+    console.log(samplesInFrame);
 
     const audioProgressBar = new ProgressBar(":bar :current/:total", {
       total: fps,
@@ -124,7 +138,7 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
 
       return Array.from(Array(channels), (_, ch) =>
         s440Frame
-          .slice(frame * samplesInFrame, (frame + 1) * samplesInFrame - 1)
+          .slice(frame * samplesInFrame, (frame + 1) * samplesInFrame)
           .map((k) => k * (-1) ** ch)
       );
     });
@@ -138,11 +152,25 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   let count = 0;
   while (count < timeout) {
     const start = Date.now();
+    console.debug({
+      width,
+      height,
+      colourSpace: 11 /* VideoColourSpace.RGBX */,
+      framerate: framerateTable[fps],
+      frames: `[ <Buffer ${videoFrames[0].length}>, +${videoFrames.length - 1} ]`,
+    },
+    options.audio
+      ? {
+          channels,
+          sampleRate,
+          frames: `[ [ [Float32Array ${audioFrames[0][0].length}], + ${audioFrames[0].length - 1} ] +${audioFrames.length - 1} ]`,
+        }
+      : undefined);
     sendInstance.send(
       {
         width,
         height,
-        colourSpace: 10 /* VideoColourSpace.RGBA */,
+        colourSpace: 11 /* VideoColourSpace.RGBX */,
         framerate: framerateTable[fps],
         frames: videoFrames,
       },
@@ -205,7 +233,7 @@ async function webcamSignalTest(sendInstance) {
  *
  * @param {import('../src').SendInstance} sendInstance
  */
-async function webcamUVCSignalTest(sendInstance) {
+async function uvcSignalTest(sendInstance) {
   const libuvc = new LibUvc();
   await libuvc.initialize();
 
@@ -225,7 +253,7 @@ async function webcamUVCSignalTest(sendInstance) {
       devices.map(async (device) => ({
         title: await device.getDescriptor().then(async (d) => {
           await d.initialize();
-          return d.productName;
+          return d. productName;
         }),
         value: device,
       }))
