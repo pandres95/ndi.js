@@ -11,7 +11,7 @@
     "install": "node-pre-gyp install --fallback-to-build",
     "configure": "node-pre-gyp configure",
     "build": "node-pre-gyp build",
-    "rebuild": "node-pre-gyp rebuild",
+    "postbuild": "[ \"$(uname)\" = \"Linux\" ] && patchelf --add-needed libndi.so.5.0.10 build/Debug/ndi.node || true",
     "prepublishOnly": "node-pre-gyp package testpackage publish"
   },
   "repository": {

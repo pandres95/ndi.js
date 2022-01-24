@@ -1,8 +1,11 @@
-import { IncomingAudioParameters } from "./incoming_audio";
-import { IncomingVideoParameters } from "./incoming_video";
-import { SendInstanceInitParameters } from './send_instance_init_params';
+import { AudioFrame } from './audio_frame';
+import { VideoFrame } from './video_frame';
+import { SendCreate } from './send_create';
 
 export class SendInstance {
-  initialize(initParameters: SendInstanceInitParameters): void;
-  send(incomingVideo: IncomingVideoParameters, incomingAudio?: IncomingAudioParameters): void;
+  initialize(initParameters: SendCreate): void;
+  send(frames: {
+    video: VideoFrame,
+    audio: AudioFrame
+  }[]): void;
 }

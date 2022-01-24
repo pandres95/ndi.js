@@ -8,10 +8,10 @@
             "cflags_cc+": ["-fexceptions"],
             "sources": [
                 "src/ndi.cpp",
-                "src/send/operator_incoming_audio.cpp",
-                "src/send/operator_incoming_video.cpp",
-                "src/send/operator_send_instance_init_params.cpp",
+                "src/send/send_create.cpp",
                 "src/send/send_instance.cpp",
+                "src/structures/audio_frame.cpp",
+                "src/structures/video_frame.cpp",
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include_dir\")",
@@ -25,6 +25,7 @@
                          "libraries": [
                              "-Wl,-rpath,@loader_path",
                              "-Wl,-rpath,@loader_path/..",
+                             "-lndi"
                          ],
                      },
                      "copies": [
@@ -32,11 +33,12 @@
                              "destination": "$(BUILDTYPE)/",
                              "files": [
                                  "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.dylib",
+                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi_licenses.txt",
                              ]
                          }
                      ],
                      'xcode_settings': {
-                        'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                         'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
                      }
                  }
                  ],
@@ -44,34 +46,22 @@
                  {
                      "link_settings": {
                          "libraries": [
-                             "-Wl,-rpath,'$$ORIGIN'",
-                             "-Wl,-rpath,'$$ORIGIN'/.."
+                             "-Wl,-rpath='$$ORIGIN'",
+                             "-Wl,-rpath='$$ORIGIN'/..",
+                             #  "-l:libndi.so.5.0.10" # TODO: Find a way to appropriately bind the library without needing to use `patchelf --add-needed libndi.so.5.0.10` build/${BUILDTYPE}/ndi.node
                          ],
                      },
                      "copies": [
                          {
                              "destination": "$(BUILDTYPE)",
                              "files": [
-                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.so.5",
+                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.so.5.0.10",
                              ]
                          }
                      ]
                  }
                  ]
             ],
-            "copies": [
-                {
-                    "destination": "$(BUILDTYPE)",
-                    "files": [
-                        "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi_licenses.txt",
-                    ]
-                }
-            ],
-            "link_settings": {
-                "libraries": [
-                    "-lndi"
-                ],
-            },
             "defines": ['NAPI_CPP_EXCEPTIONS']
         }
     ]

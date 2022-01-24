@@ -11,15 +11,21 @@
                 "random",
                 "-f",
                 "${input:frames}",
-                "${input:timeout}"
-            ]
-        }
+                "-w",
+                "${input:width}",
+                "-h",
+                "${input:height}",
+                "${input:timeout}",
+                "${input:audio}",
+            ],
+            "preLaunchTask": "npm: build"
+        },
     ],
     "inputs": [
         {
             "id": "frames",
             "type": "promptString",
-            "default": "60",
+            "default": "30",
             "description": "Enter framerate"
         },
         {
@@ -27,6 +33,25 @@
             "type": "promptString",
             "default": "15",
             "description": "Enter number of seconds to broadcast signal"
+        },
+        {
+            "id": "width",
+            "type": "promptString",
+            "default": "640",
+            "description": "Enter the video width"
+        },
+        {
+            "id": "height",
+            "type": "promptString",
+            "default": "480",
+            "description": "Enter the video height"
+        },
+        {
+            "id": "audio",
+            "type": "pickString",
+            "description": "Select your audio choice",
+            "default": "--audio",
+            "options": ["--audio", "--no-audio"]
         }
     ]
 }

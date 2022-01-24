@@ -1,11 +1,11 @@
-export interface IncomingVideoParameters {
+export interface VideoFrame {
   height: number;
   width: number;
 
   colourSpace: VideoColourSpace;
   framerate: VideoFramerate;
 
-  frames: [Buffer];
+  data: Buffer;
 }
 
 export enum VideoColourSpace {
