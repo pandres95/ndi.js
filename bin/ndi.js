@@ -4,7 +4,7 @@ import { isAbsolute, resolve } from "path";
 
 import ProgressBar from "progress";
 import { SendInstance } from "../src";
-import UVC from "uvc";
+// import UVC from "uvc";
 import { VideoCapture } from "camera-capture";
 import callback from "callback-stream";
 import commander from "commander";
@@ -13,7 +13,7 @@ import prompts from "prompts";
 import sharp from "sharp";
 
 const { createCommand, program } = commander;
-const { Context, Controls, FrameStreamer, LibUvc } = UVC;
+// const { Context, Controls, FrameStreamer, LibUvc } = UVC;
 
 async function main() {
   const processAction =
