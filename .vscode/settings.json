@@ -10,5 +10,6 @@
         "ostream": "cpp",
         "cstdio": "cpp",
         "__config": "cpp"
-    }
+    },
+    "python.formatting.provider": "autopep8"
 }
