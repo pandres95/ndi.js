@@ -50,6 +50,8 @@ IncomingVideoParameters::operator NDIlib_video_frame_v2_t() const {
     break;
   }
 
+  out.line_stride_in_bytes = this->width * 4;
+
   switch (this->colourSpace) {
   case UYVY:
     out.FourCC = NDIlib_FourCC_type_UYVY;
@@ -77,16 +79,16 @@ IncomingVideoParameters::operator NDIlib_video_frame_v2_t() const {
     break;
   case BGRX:
     out.FourCC = NDIlib_FourCC_type_BGRX;
+    out.line_stride_in_bytes = this->width * 3;
     break;
   case RGBA:
     out.FourCC = NDIlib_FourCC_type_RGBA;
     break;
   case RGBX:
     out.FourCC = NDIlib_FourCC_type_RGBX;
+    out.line_stride_in_bytes = this->width * 3;
     break;
   }
-
-  out.line_stride_in_bytes = this->width * 4;
 
   return out;
 }
