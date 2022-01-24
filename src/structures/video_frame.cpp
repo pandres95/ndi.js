@@ -1,13 +1,20 @@
-#include <send/incoming_video.h>
+#include <cassert>
+#include <iostream>
+#include <structures/video_frame.h>
 
-IncomingVideoParameters::IncomingVideoParameters(const Napi::Object &object)
+using namespace std;
+
+VideoFrame::VideoFrame(const Napi::Object &object)
     : width(object.Get("width").ToNumber()),
       height(object.Get("height").ToNumber()),
       colourSpace(object.Get("colourSpace").ToNumber()),
       framerate(object.Get("framerate").ToNumber()),
-      frames(object.Get("frames").As<Napi::Array>()) {}
+      data(object.Get("data").As<Napi::Buffer<uint8_t> >()) {
+  assert(this->data.ElementLength() ==
+         (size_t)(this->width * this->height * 4));
+}
 
-IncomingVideoParameters::operator NDIlib_video_frame_v2_t() const {
+VideoFrame::operator NDIlib_video_frame_v2_t() const {
   NDIlib_video_frame_v2_t out;
 
   out.xres = this->width;
@@ -79,16 +86,17 @@ IncomingVideoParameters::operator NDIlib_video_frame_v2_t() const {
     break;
   case BGRX:
     out.FourCC = NDIlib_FourCC_type_BGRX;
-    out.line_stride_in_bytes = this->width * 3;
     break;
   case RGBA:
     out.FourCC = NDIlib_FourCC_type_RGBA;
     break;
   case RGBX:
     out.FourCC = NDIlib_FourCC_type_RGBX;
-    out.line_stride_in_bytes = this->width * 3;
     break;
   }
+
+  uint8_t *buffer_data = this->data.Data();
+  out.p_data = buffer_data;
 
   return out;
 }

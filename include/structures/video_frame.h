@@ -1,12 +1,12 @@
 #include <napi.h>
 #include <Processing.NDI.Lib.h>
 
-#ifndef _SRC_INCOMING_BUFFERS_H_
-#define _SRC_INCOMING_BUFFERS_H_
+#ifndef _SRC_STRUCTURES_VIDEO_FRAME_H_
+#define _SRC_STRUCTURES_VIDEO_FRAME_H_
 
-class IncomingVideoParameters {
+class VideoFrame {
 public:
-  IncomingVideoParameters(const Napi::Object &);
+  VideoFrame(const Napi::Object &);
 
   int width;
   int height;
@@ -14,7 +14,7 @@ public:
   int colourSpace;
   int framerate;
 
-  Napi::Array frames;
+  Napi::Buffer<uint8_t> data;
 
   operator NDIlib_video_frame_v2_t() const;
 };

@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include <send/incoming_audio.h>
-#include <send/incoming_video.h>
+#include <send/send_create.h>
 #include <send/send_instance.h>
-#include <send/send_instance_init_params.h>
+#include <structures/audio_frame.h>
+#include <structures/video_frame.h>
 
 using namespace std;
 
@@ -28,7 +28,7 @@ void SendInstance::Initialize(const Napi::CallbackInfo &info) {
   // Initialize sendCreate parameters using the initParameters argument
   try {
     NDIlib_send_create_t sendCreateParams =
-        (SendInstanceInitParameters)info[0].ToObject();
+        (SendCreate)info[0].ToObject();
 
     this->ndiSendInstance = NDIlib_send_create(&sendCreateParams);
 
@@ -41,72 +41,28 @@ void SendInstance::Initialize(const Napi::CallbackInfo &info) {
 }
 
 void SendInstance::Send(const Napi::CallbackInfo &info) {
-  IncomingVideoParameters incomingVideoParameters = info[0].As<Napi::Object>();
-  IncomingAudioParameters *incomingAudioParameters = NULL;
-
-  if (info.Length() == 2 && !(info[1].IsUndefined() || info[1].IsNull())) {
-    IncomingAudioParameters params = info[1].As<Napi::Object>();
-    incomingAudioParameters = &params;
+  if (info.Length() == 0 || info[0].IsUndefined() || info[0].IsNull() || !info[0].IsArray()) {
+    Napi::TypeError::New(
+      info.Env(), "The frames argument is expected to be an Array"
+    ).ThrowAsJavaScriptException();
+    return;
   }
 
-  NDIlib_video_frame_v2_t videoFrame = incomingVideoParameters;
-  NDIlib_audio_frame_v2_t audioFrame;
+  const Napi::Array frames = info[0].As<Napi::Array>();
 
-  if (incomingAudioParameters != NULL) {
-    incomingAudioParameters->framerate_N = videoFrame.frame_rate_N;
-    incomingAudioParameters->framerate_D = videoFrame.frame_rate_D;
+  for (uint32_t idx = 0; idx < frames.Length(); idx++) {
+    const Napi::Object frame = frames.Get(idx).As<Napi::Object>();
 
-    audioFrame = *incomingAudioParameters;
-  }
-
-  for (uint32_t idx = 0; idx < incomingVideoParameters.frames.Length(); idx++) {
-    cout << incomingAudioParameters->frames.Length() << " audio frames"
-         << endl; // TODO: Delete this log
-
-    if (incomingAudioParameters != NULL) {
-      audioFrame.p_data = (float *)malloc(audioFrame.no_channels *
-                                          audioFrame.channel_stride_in_bytes);
-      Napi::Array frame =
-          incomingAudioParameters->frames.Get(idx).As<Napi::Array>();
-
-      cout << frame.Length() << " channels on frame" << idx
-           << endl; // TODO: Delete this log
-
-      for (int channel = 0; channel < incomingAudioParameters->channelsNumber;
-           channel++) {
-        Napi::Float32Array channelData =
-            frame.Get(channel).As<Napi::Float32Array>();
-
-        cout << audioFrame.no_samples << " audio samples on channel"
-             << channel + 1 << endl; // TODO: Delete this log
-
-        float *buffer = channelData.Data();
-
-        cout << "Buffer example: "; // TODO: Delete this log
-        for (int i = 0; i < 20; i++) {
-          cout << buffer[i] << " ";
-        }                     // TODO: Delete this log
-        cout << endl << endl; // TODO: Delete this log
-
-        // Get the pointer to the start of this channel
-        float *p_ch = (float *)((uint8_t *)audioFrame.p_data +
-                                (channel * audioFrame.channel_stride_in_bytes));
-
-        // Fill it with silence
-        for (int sample_no = 0; sample_no < audioFrame.no_samples; sample_no++)
-          p_ch[sample_no] = buffer[sample_no];
-      }
-
-      NDIlib_send_send_audio_v2(this->ndiSendInstance, &audioFrame);
+    if (frame.Has("audio") && !frame.Get("audio").IsUndefined() && !frame.Get("audio").IsNull()) {
+      const NDIlib_audio_frame_v3_t audioFrame = (AudioFrame) frame.Get("audio").As<Napi::Object>();
+      NDIlib_send_send_audio_v3(this->ndiSendInstance, &audioFrame);
       free(audioFrame.p_data);
     }
 
-    Napi::Buffer<uint8_t> buffer =
-        incomingVideoParameters.frames.Get(idx).As<Napi::Buffer<uint8_t>>();
-    uint8_t *buffer_data = buffer.Data();
-
-    videoFrame.p_data = buffer_data;
-    NDIlib_send_send_video_async_v2(this->ndiSendInstance, &videoFrame);
+    if (frame.Has("video") && !frame.Get("video").IsUndefined() && !frame.Get("video").IsNull()) {
+      const NDIlib_video_frame_v2_t ndiVideoFrame = (VideoFrame) frame.Get("video").As<Napi::Object>();
+      NDIlib_send_send_video_async_v2(this->ndiSendInstance, &ndiVideoFrame);
+    }
   }
 }
 

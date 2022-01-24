@@ -1,8 +1,8 @@
 #include <napi.h>
 #include <Processing.NDI.Lib.h>
 
-#ifndef _VIDEO_SOURCE_H_
-#define _VIDEO_SOURCE_H_
+#ifndef _SRC_SEND_SEND_INSTANCE_H_
+#define _SRC_SEND_SEND_INSTANCE_H_
 
 class SendInstance : public Napi::ObjectWrap<SendInstance> {
 public:

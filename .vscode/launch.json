@@ -17,14 +17,15 @@
                 "${input:height}",
                 "${input:timeout}",
                 "${input:audio}",
-            ]
-        }
+            ],
+            "preLaunchTask": "npm: build"
+        },
     ],
     "inputs": [
         {
             "id": "frames",
             "type": "promptString",
-            "default": "60",
+            "default": "30",
             "description": "Enter framerate"
         },
         {

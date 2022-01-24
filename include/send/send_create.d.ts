@@ -1,4 +1,4 @@
-export interface SendInstanceInitParameters {
+export interface SendCreate {
   /**
    * The name of the send video source.
    */

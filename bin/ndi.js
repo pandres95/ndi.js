@@ -1,4 +1,4 @@
-#! /usr/local/bin/node --experimental-specifier-resolution=node
+#!/usr/bin/env node --experimental-specifier-resolution=node
 
 import { isAbsolute, resolve } from "path";
 
@@ -44,20 +44,23 @@ async function main() {
           "The number of seconds to send out the signal",
           "5"
         )
+        .option("-v, --video", "Include video", true)
         .option("-f, --frames <frames>", "Number of frames per second", "60")
         .option("-w, --width <width>", "Width of video sample", "1920")
         .option("-h, --height <height>", "Height of video sample", "1080")
+        .option("-V, --no-video", "Disable video")
         .option("-a, --audio", "Include audio", true)
-        .option("-A, --no-audio", "Disable audio")
         .option("-c, --channels <channels>", "Number of channels", "2")
         .option("-r, --sample-rate <sampleRate>", "Number of channels", "48000")
+        .option("-A, --no-audio", "Disable audio")
         .action(processAction(randomSignalTest))
     )
     .addCommand(createCommand("webcam").action(processAction(webcamSignalTest)))
     .addCommand(
-      createCommand("uvc").action(processAction(uvcSignalTest))
-        .description('Sends a UVC device stream')
-        .option('-A, --no-audio', 'Disable audio')
+      createCommand("uvc")
+        .action(processAction(uvcSignalTest))
+        .description("Sends a UVC device stream")
+        .option("-A, --no-audio", "Disable audio")
     )
     .addCommand(
       createCommand("ogv")
@@ -76,11 +79,11 @@ async function main() {
 async function randomSignalTest(sendInstance, timeout = 5, options) {
   const sineWaveFLTAudioFrame = (frequency = 440, sampleRate = 48000) =>
     Float32Array.from(Array(sampleRate), (_, i) =>
-      Math.sin((Math.PI * i) / frequency)
+      Math.sin(8 * (Math.PI * i) / frequency)
     );
-  const randomRGBXVideoFrame = (width, height) =>
-    Array.from(Array(height * width * 3), (_, k) =>
-      Math.round(255 * Math.random())
+  const randomRGBAVideoFrame = (width, height) =>
+    Array.from(Array(height * width * 4), (_, k) =>
+      k % 4 < 3 ? Math.round(255 * Math.random()) : 255
     );
   const framerateTable = {
     24: 1 /* VideoFramerate.F24 */,
@@ -95,7 +98,7 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
 
   // Setup random video data
   const width = Number(options?.width ?? 1920);
-  const height = Number(options?.width ?? 1080);
+  const height = Number(options?.height ?? 1080);
 
   const fps = Number(options?.frames ?? 60);
 
@@ -106,7 +109,7 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   videoProgressBar.render();
 
   const videoFrames = Array.from(Array(fps), () => {
-    const frame = Buffer.from(randomRGBXVideoFrame(height, width));
+    const frame = Buffer.from(randomRGBAVideoFrame(height, width));
     videoProgressBar.tick(1);
     return frame;
   });
@@ -121,12 +124,9 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   let audioFrames = [];
   if (options.audio) {
     console.log("Creating audio frames");
-    /**
-     * 523.25Hz (C5) tuned sine wave
-     */
-    const s440Frame = sineWaveFLTAudioFrame(130.81, sampleRate);
+
     const samplesInFrame = Math.ceil(sampleRate / fps);
-    console.log(samplesInFrame);
+    const sFrame = sineWaveFLTAudioFrame(samplesInFrame, sampleRate);
 
     const audioProgressBar = new ProgressBar(":bar :current/:total", {
       total: fps,
@@ -137,7 +137,7 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
       audioProgressBar.tick(1);
 
       return Array.from(Array(channels), (_, ch) =>
-        s440Frame
+        sFrame
           .slice(frame * samplesInFrame, (frame + 1) * samplesInFrame)
           .map((k) => k * (-1) ** ch)
       );
@@ -149,38 +149,48 @@ async function randomSignalTest(sendInstance, timeout = 5, options) {
   // Start broadcasting
   const start = Date.now();
 
-  let count = 0;
-  while (count < timeout) {
-    const start = Date.now();
-    console.debug({
+  console.debug(
+    {
       width,
       height,
-      colourSpace: 11 /* VideoColourSpace.RGBX */,
+      colourSpace: 10 /* VideoColourSpace.RGBA */,
       framerate: framerateTable[fps],
-      frames: `[ <Buffer ${videoFrames[0].length}>, +${videoFrames.length - 1} ]`,
+      frames: `[ <Buffer ${videoFrames[0].length}>, +${
+        videoFrames.length - 1
+      } ]`,
     },
     options.audio
       ? {
           channels,
           sampleRate,
-          frames: `[ [ [Float32Array ${audioFrames[0][0].length}], + ${audioFrames[0].length - 1} ] +${audioFrames.length - 1} ]`,
+          frames: `[ [ [Float32Array ${audioFrames[0][0].length}], + ${
+            audioFrames[0].length - 1
+          } ] +${audioFrames.length - 1} ]`,
         }
-      : undefined);
+      : undefined
+  );
+
+  let count = 0;
+  while (count < timeout) {
+    const start = Date.now();
     sendInstance.send(
-      {
-        width,
-        height,
-        colourSpace: 11 /* VideoColourSpace.RGBX */,
-        framerate: framerateTable[fps],
-        frames: videoFrames,
-      },
-      options.audio
-        ? {
-            channels,
-            sampleRate,
-            frames: audioFrames,
-          }
-        : undefined
+      Array.from(Array(fps), (_, idx) => ({
+        audio: options.audio
+          ? {
+              sampleRate,
+              channels: audioFrames[idx],
+            }
+          : undefined,
+        video: options.video
+          ? {
+              width,
+              height,
+              colourSpace: 10 /* VideoColourSpace.RGBA */,
+              framerate: framerateTable[fps],
+              data: videoFrames[idx],
+            }
+          : undefined,
+      }))
     );
     console.log(`Sent ${fps} frames of video in ${Date.now() - start}ms`);
 
@@ -253,7 +263,7 @@ async function uvcSignalTest(sendInstance) {
       devices.map(async (device) => ({
         title: await device.getDescriptor().then(async (d) => {
           await d.initialize();
-          return d. productName;
+          return d.productName;
         }),
         value: device,
       }))

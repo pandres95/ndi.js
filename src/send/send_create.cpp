@@ -1,13 +1,13 @@
-#include <send/send_instance_init_params.h>
+#include <send/send_create.h>
 #include <string>
 
 using namespace std;
 
-SendInstanceInitParameters::SendInstanceInitParameters(
+SendCreate::SendCreate(
     const Napi::Object &object)
     : Napi::Object(object) {}
 
-SendInstanceInitParameters::operator NDIlib_send_create_t() const {
+SendCreate::operator NDIlib_send_create_t() const {
   NDIlib_send_create_t sendCreateParams;
 
   if (!this->Has("name") || this->Get("name").IsUndefined()) {

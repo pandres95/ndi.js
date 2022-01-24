@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "npm run build --debug",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build",
+			"detail": "Build (debug) library"
+		}
+	]
+}

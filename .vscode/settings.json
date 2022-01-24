@@ -9,7 +9,8 @@
         "memory": "cpp",
         "ostream": "cpp",
         "cstdio": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "*.inc": "cpp"
     },
     "python.formatting.provider": "autopep8"
 }
