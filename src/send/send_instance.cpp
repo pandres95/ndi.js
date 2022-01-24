@@ -35,7 +35,7 @@ void SendInstance::Initialize(const Napi::CallbackInfo &info) {
     if (!this->ndiSendInstance) {
       throw Napi::Error::New(info.Env(), "Could not initialize the instance");
     }
-  } catch (Napi::Error error) {
+  } catch (const Napi::Error &error) {
     error.ThrowAsJavaScriptException();
   }
 }
@@ -44,13 +44,13 @@ void SendInstance::Send(const Napi::CallbackInfo &info) {
   IncomingVideoParameters incomingVideoParameters = info[0].As<Napi::Object>();
   IncomingAudioParameters *incomingAudioParameters = NULL;
 
-  if (info.Length() == 2) {
+  if (info.Length() == 2 && !(info[1].IsUndefined() || info[1].IsNull())) {
     IncomingAudioParameters params = info[1].As<Napi::Object>();
     incomingAudioParameters = &params;
   }
 
   NDIlib_video_frame_v2_t videoFrame = incomingVideoParameters;
-  NDIlib_audio_frame_v2_t audioFrame = NULL;
+  NDIlib_audio_frame_v2_t audioFrame;
 
   if (incomingAudioParameters != NULL) {
     incomingAudioParameters->framerate_N = videoFrame.frame_rate_N;
