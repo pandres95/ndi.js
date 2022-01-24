@@ -25,6 +25,7 @@
                          "libraries": [
                              "-Wl,-rpath,@loader_path",
                              "-Wl,-rpath,@loader_path/..",
+                             "-lndi"
                          ],
                      },
                      "copies": [
@@ -32,6 +33,7 @@
                              "destination": "$(BUILDTYPE)/",
                              "files": [
                                  "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.dylib",
+                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi_licenses.txt",
                              ]
                          }
                      ],
@@ -44,34 +46,22 @@
                  {
                      "link_settings": {
                          "libraries": [
-                             "-Wl,-rpath,'$$ORIGIN'",
-                             "-Wl,-rpath,'$$ORIGIN'/.."
+                             "-Wl,-rpath='$$ORIGIN'",
+                             "-Wl,-rpath='$$ORIGIN'/..",
+                             #  "-l:libndi.so.5.0.10" # TODO: Find a way to appropriately bind the library without needing to use `patchelf --add-needed libndi.so.5.0.10` build/${BUILDTYPE}/ndi.node
                          ],
                      },
                      "copies": [
                          {
                              "destination": "$(BUILDTYPE)",
                              "files": [
-                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.so.5",
+                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.so.5.0.10",
                              ]
                          }
                      ]
                  }
                  ]
             ],
-            "copies": [
-                {
-                    "destination": "$(BUILDTYPE)",
-                    "files": [
-                        "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi_licenses.txt",
-                    ]
-                }
-            ],
-            "link_settings": {
-                "libraries": [
-                    "-lndi"
-                ],
-            },
             "defines": ['NAPI_CPP_EXCEPTIONS']
         }
     ]
