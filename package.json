@@ -10,8 +10,9 @@
     "test": "jest",
     "install": "node-pre-gyp install --fallback-to-build",
     "configure": "node-pre-gyp configure",
-    "build": "node-pre-gyp build",
-    "postbuild": "[ \"$(uname)\" = \"Linux\" ] && patchelf --add-needed libndi.so.5.0.10 build/Debug/ndi.node || true",
+    "prebuild": "[ ! -d ./build ] && npm run configure || true",
+    "build": "./scripts/build.js",
+    "postbuild": "./scripts/postbuild.js",
     "prepublishOnly": "node-pre-gyp package testpackage publish"
   },
   "repository": {
@@ -37,14 +38,24 @@
   "homepage": "https://github.com/pandres95/ndi.js#readme",
   "devDependencies": {
     "aws-sdk": "^2.1048.0",
+    "debug": "^4.3.3",
     "dotenv": "^10.0.0",
     "fs-extra": "^10.0.0",
     "jest": "^27.3.1",
     "node-addon-api": "^4.2.0",
-    "node-gyp": "^8.4.1"
+    "node-gyp": "^8.4.1",
+    "zx": "^4.3.0"
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.8",
     "bindings": "^1.5.0"
-  }
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
 }
