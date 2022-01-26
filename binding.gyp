@@ -33,7 +33,6 @@
                              "destination": "$(BUILDTYPE)/",
                              "files": [
                                  "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.dylib",
-                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi_licenses.txt",
                              ]
                          }
                      ],
@@ -48,19 +47,29 @@
                          "libraries": [
                              "-Wl,-rpath='$$ORIGIN'",
                              "-Wl,-rpath='$$ORIGIN'/..",
-                             #  "-l:libndi.so.5.0.10" # TODO: Find a way to appropriately bind the library without needing to use `patchelf --add-needed libndi.so.5.0.10` build/${BUILDTYPE}/ndi.node
+                             # TODO: Find a way to appropriately bind the library without needing to bind at postbuild.mjs
+                             #  "-l:libndi.so.5.0.10",
                          ],
                      },
                      "copies": [
                          {
                              "destination": "$(BUILDTYPE)",
                              "files": [
-                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.so.5.0.10",
+                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib\")/libndi.so",
                              ]
                          }
                      ]
                  }
                  ]
+            ],
+            "copies": [
+                {
+                    "destination": "$(BUILDTYPE)/",
+                    "files": [
+                        "<!@(node -p \"require('./utils/paths').ndi_sdk.dir\")/libndi_licenses.txt",
+
+                    ]
+                }
             ],
             "defines": ['NAPI_CPP_EXCEPTIONS']
         }

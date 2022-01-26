@@ -1,2 +1,2 @@
-.vendor/
-*.h
+.vendor/node-gyp
+build/

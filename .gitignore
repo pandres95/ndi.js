@@ -1,6 +1,6 @@
 .DS_Store
 .env
-.vendor
+.vendor/node-gyp
 
 node_modules/
 build/
