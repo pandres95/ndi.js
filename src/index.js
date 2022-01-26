@@ -7,3 +7,4 @@ const addon = bindings('ndi');
 const SendInstance = addon.SendInstance;
 
 export { SendInstance };
+export * from './structures/video_frame.js';
