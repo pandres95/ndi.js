@@ -55,7 +55,7 @@
                          {
                              "destination": "$(BUILDTYPE)",
                              "files": [
-                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib\")/libndi.so",
+                                 "<!@(node -p \"require('./utils/paths').ndi_sdk.lib_dir\")/libndi.so",
                              ]
                          }
                      ]

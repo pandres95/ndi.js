@@ -1,7 +1,6 @@
-#!/usr/bin/env npx zx
+#!/usr/bin/env node
 
-import 'zx/globals';
-
+import { $ } from 'zx';
 import { buildType } from './common.js';
 import debug from 'debug';
 

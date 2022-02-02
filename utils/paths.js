@@ -10,7 +10,7 @@ function exportNDIPaths() {
 
   return {
     dir: DIR_NAME,
-    lib_dir: join(DIR_NAME, "lib", process.platform, process.platform !== 'darwin' ? `${process.arch}${process.env.raspberry_version ? `-${process.env.npm_config_raspberry_version}` : ''}` : '.'),
+    lib_dir: join(DIR_NAME, "lib", process.platform, process.platform !== 'darwin' ? `${process.arch}${process.env.raspberry_version ? `-${process.env.raspberry_version}` : ''}` : '.'),
     include_dir: join(DIR_NAME, "include"),
   };
 }
