@@ -9,6 +9,7 @@ export interface VideoFrame {
 }
 
 export enum VideoColourSpace {
+  YUYV = 0,
   UYVY = 1,
   UYVA = 2,
   P216 = 3,

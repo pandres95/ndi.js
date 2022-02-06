@@ -52,7 +52,12 @@ typedef enum NDIlib_frame_type_e
 
 // FourCC values for video frames
 typedef enum NDIlib_FourCC_video_type_e
-{	// YCbCr color space using 4:2:2.
+{
+    // YCbCr color space using 4:2:2.
+	NDIlib_FourCC_video_type_YUYV = NDI_LIB_FOURCC('Y', 'U', 'Y', 'V'),
+	NDIlib_FourCC_type_YUYV = NDIlib_FourCC_video_type_YUYV,
+
+    // YCbCr color space using 4:2:2.
 	NDIlib_FourCC_video_type_UYVY = NDI_LIB_FOURCC('U', 'Y', 'V', 'Y'),
 	NDIlib_FourCC_type_UYVY = NDIlib_FourCC_video_type_UYVY,
 

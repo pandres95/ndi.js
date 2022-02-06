@@ -56,6 +56,11 @@ VideoFrame::operator NDIlib_video_frame_v2_t() const {
   float rstride_in_bytes = 0;
 
   switch (this->colourSpace) {
+  case YUYV:
+    // 4:2:2 = 16 bit (2 bytes)
+    rstride_in_bytes = 2;
+    out.FourCC = NDIlib_FourCC_type_YUYV;
+    break;
   case UYVY:
     // 4:2:2 = 16 bit (2 bytes)
     rstride_in_bytes = 2;
