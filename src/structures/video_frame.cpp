@@ -8,8 +8,7 @@ VideoFrame::VideoFrame(const Napi::Object &object)
     : width(object.Get("width").ToNumber()),
       height(object.Get("height").ToNumber()),
       colourSpace(object.Get("colourSpace").ToNumber()),
-      framerate(object.Get("framerate").ToNumber()),
-      data(object.Get("data").As<Napi::Buffer<uint8_t> >()) {}
+      framerate(object.Get("framerate").ToNumber()), data(object.Get("data")) {}
 
 VideoFrame::operator NDIlib_video_frame_v2_t() const {
   NDIlib_video_frame_v2_t out;
@@ -116,16 +115,35 @@ VideoFrame::operator NDIlib_video_frame_v2_t() const {
 
   out.line_stride_in_bytes = this->width * rstride_in_bytes;
 
-  if ((this->data.ElementLength() / (this->width * this->height)) !=
-      rstride_in_bytes) {
-    string errorMessage =
-        "stream `rstride_in_bytes` is " +
-        to_string(this->data.ElementLength() / (this->width * this->height)) +
-        ", it should be " + to_string(rstride_in_bytes);
-    throw Napi::Error::New(this->data.Env(), errorMessage);
+  if (!this->data.IsTypedArray() || !this->data.IsBuffer()) {
+    throw Napi::TypeError::New(
+        this->data.Env(), "`data` should be either a Buffer or a Uint8Array");
+    return;
   }
 
-  uint8_t *buffer_data = this->data.Data();
+  float frameStride = 0;
+  uint8_t *buffer_data;
+
+  if (this->data.IsTypedArray()) {
+    Napi::Uint8Array dataFrame = this->data.As<Napi::Uint8Array>();
+
+    frameStride = (dataFrame.ElementLength() / (this->width * this->height));
+    buffer_data = dataFrame.Data();
+  } else {
+    Napi::Buffer<uint8_t> dataFrame = this->data.As<Napi::Buffer<uint8_t>>();
+
+    frameStride = (dataFrame.ElementLength() / (this->width * this->height));
+    buffer_data = dataFrame.Data();
+  }
+
+  if (frameStride != rstride_in_bytes) {
+    string errorMessage = "stream `rstride_in_bytes` is " +
+                          to_string(frameStride) + ", it should be " +
+                          to_string(rstride_in_bytes);
+    throw Napi::Error::New(this->data.Env(), errorMessage);
+    return;
+  }
+
   out.p_data = buffer_data;
 
   return out;
