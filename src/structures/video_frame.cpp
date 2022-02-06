@@ -135,7 +135,7 @@ VideoFrame::operator NDIlib_video_frame_v2_t() const {
     frameStride = (dataFrame.ElementLength() / (this->width * this->height));
     buffer_data = dataFrame.Data();
   } else {
-    Napi::Buffer<uint8_t> dataFrame = this->data.As<Napi::Buffer<uint8_t>>();
+    Napi::Buffer<uint8_t> dataFrame = this->data.As<Napi::Buffer<uint8_t> >();
 
     frameStride = (dataFrame.ElementLength() / (this->width * this->height));
     buffer_data = dataFrame.Data();
