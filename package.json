@@ -1,6 +1,6 @@
 {
   "name": "ndi.js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Wrapper library for NDI",
   "type": "module",
   "main": "src/index.js",
