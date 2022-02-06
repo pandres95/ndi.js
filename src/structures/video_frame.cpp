@@ -56,65 +56,60 @@ VideoFrame::operator NDIlib_video_frame_v2_t() const {
   float rstride_in_bytes = 0;
 
   switch (this->colourSpace) {
-  case YUYV:
-    // 4:2:2 = 16 bit (2 bytes)
-    rstride_in_bytes = 2;
-    out.FourCC = NDIlib_FourCC_type_YUYV;
-    break;
   case UYVY:
     // 4:2:2 = 16 bit (2 bytes)
     rstride_in_bytes = 2;
-    out.FourCC = NDIlib_FourCC_type_UYVY;
+    out.FourCC = NDIlib_FourCC_video_type_UYVY;
     break;
   case UYVA:
     // 4:2:2:4 = 24 bit (3 bytes)
     rstride_in_bytes = 3;
-    out.FourCC = NDIlib_FourCC_type_UYVA;
+    out.FourCC = NDIlib_FourCC_video_type_UYVA;
     break;
   case P216:
     // 4:2:2 = 16 bit (2 bytes)
     rstride_in_bytes = 2;
-    out.FourCC = NDIlib_FourCC_type_P216;
+    out.FourCC = NDIlib_FourCC_video_type_P216;
     break;
   case PA16:
     // 4:2:2:4 = 24 bit (3 bytes)
     rstride_in_bytes = 3;
-    out.FourCC = NDIlib_FourCC_type_PA16;
+    out.FourCC = NDIlib_FourCC_video_type_PA16;
     break;
   case YV12:
     // 4:2:0 = 12 bit (1.5 bytes)
     rstride_in_bytes = 1.5;
-    out.FourCC = NDIlib_FourCC_type_YV12;
+    out.FourCC = NDIlib_FourCC_video_type_YV12;
     break;
   case I420:
     // 4:2:0 = 12 bit (1.5 bytes)
     rstride_in_bytes = 1.5;
-    out.FourCC = NDIlib_FourCC_type_I420;
+    out.FourCC = NDIlib_FourCC_video_type_I420;
     break;
   case NV12:
     // 4:2:0 = 12 bit (1.5 bytes)
     rstride_in_bytes = 1.5;
-    out.FourCC = NDIlib_FourCC_type_NV12;
+    out.FourCC = NDIlib_FourCC_video_type_NV12;
     break;
   case BGRA:
     // 4:4:4:4 = 32 bit (4 bytes)
     rstride_in_bytes = 4;
-    out.FourCC = NDIlib_FourCC_type_BGRA;
+    out.FourCC = NDIlib_FourCC_video_type_BGRA;
     break;
   case BGRX:
     // 4:4:4:x = 32 bit (4 bytes)
     rstride_in_bytes = 4;
-    out.FourCC = NDIlib_FourCC_type_BGRX;
+    out.FourCC = NDIlib_FourCC_video_type_BGRX;
     break;
   case RGBA:
     // 4:4:4:4 = 32 bit (4 bytes)
     rstride_in_bytes = 4;
-    out.FourCC = NDIlib_FourCC_type_RGBA;
+    out.FourCC = NDIlib_FourCC_video_type_RGBA;
     break;
   case RGBX:
     // 4:4:4:x = 32 bit (4 bytes)
     rstride_in_bytes = 4;
-    out.FourCC = NDIlib_FourCC_type_RGBX;
+    out.FourCC = NDIlib_FourCC_video_type_RGBX;
     break;
   }
 

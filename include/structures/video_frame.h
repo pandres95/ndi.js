@@ -20,7 +20,6 @@ public:
 };
 
 typedef enum video_colour_space_type {
-  YUYV = 0,
   UYVY = 1,
   UYVA = 2,
   P216 = 3,
