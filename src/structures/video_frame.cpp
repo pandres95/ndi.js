@@ -118,7 +118,7 @@ VideoFrame::operator NDIlib_video_frame_v2_t() const {
   if (!this->data.IsTypedArray() || !this->data.IsBuffer()) {
     throw Napi::TypeError::New(
         this->data.Env(), "`data` should be either a Buffer or a Uint8Array");
-    return;
+    return NULL;
   }
 
   float frameStride = 0;
@@ -141,7 +141,7 @@ VideoFrame::operator NDIlib_video_frame_v2_t() const {
                           to_string(frameStride) + ", it should be " +
                           to_string(rstride_in_bytes);
     throw Napi::Error::New(this->data.Env(), errorMessage);
-    return;
+    return NULL;
   }
 
   out.p_data = buffer_data;
