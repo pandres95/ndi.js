@@ -9,11 +9,11 @@
     "clean": "node-pre-gyp clean",
     "test": "jest",
     "install": "node-pre-gyp install --fallback-to-build",
-    "configure": "node-pre-gyp configure",
+    "configure": "./scripts/configure.js",
     "prebuild": "[ ! -d ./build ] && npm run configure || true",
     "build": "./scripts/build.js",
     "postbuild": "./scripts/postbuild.js",
-    "prepublishOnly": "node-pre-gyp package testpackage publish"
+    "uploadBinaries": "node-pre-gyp package testpackage publish"
   },
   "repository": {
     "type": "git",

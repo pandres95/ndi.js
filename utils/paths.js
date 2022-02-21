@@ -8,9 +8,12 @@ const VENDOR_DIR_NAME = ".vendor";
 function exportNDIPaths() {
   const DIR_NAME = join(VENDOR_DIR_NAME, "ndi");
 
+  const raspberry_version = process.env.raspberry_version;
+  const arch = process.env.ARCH ?? process.arch;
+
   return {
     dir: DIR_NAME,
-    lib_dir: join(DIR_NAME, "lib", process.platform, process.platform !== 'darwin' ? `${process.arch}${process.env.raspberry_version ? `-${process.env.raspberry_version}` : ''}` : '.'),
+    lib_dir: join(DIR_NAME, "lib", process.platform, process.platform !== 'darwin' ? `${arch}${raspberry_version ? `-${raspberry_version}` : ''}` : '.'),
     include_dir: join(DIR_NAME, "include"),
   };
 }
