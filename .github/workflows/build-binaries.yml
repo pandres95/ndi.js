@@ -3,7 +3,7 @@ name: Build native binaries
 on:
   release:
     types:
-      - created
+      - prereleased
 
 jobs:
   build-and-publish:
