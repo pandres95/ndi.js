@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node-version: [12, 14, 16]
+        node-version: [16]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -25,6 +25,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies
         run: npm install
+      - name: Configure makefile
+        run: npm run configure --production
       - name: Build binaries
         run: npm run build --production
       - name: Upload binaries
@@ -38,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [12, 14, 16]
+        node-version: [16]
 
     runs-on: ubuntu-latest
 
@@ -46,7 +48,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build binaries
-        uses: uraimo/run-on-arch-action@v2
+        uses: uraimo/run-on-arch-action@v2.1.1
         with:
           arch: aarch64
           distro: ubuntu20.04
@@ -63,5 +65,6 @@ jobs:
 
           run: |
             npm install
+            npm run configure --production
             npm run build --production
             npm run uploadBinaries
