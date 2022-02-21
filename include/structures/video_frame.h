@@ -14,7 +14,7 @@ public:
   int colourSpace;
   int framerate;
 
-  Napi::Buffer<uint8_t> data;
+  Napi::Value data;
 
   operator NDIlib_video_frame_v2_t() const;
 };

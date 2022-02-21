@@ -5,7 +5,7 @@ export interface VideoFrame {
   colourSpace: VideoColourSpace;
   framerate: VideoFramerate;
 
-  data: Buffer;
+  data: Buffer | Uint8Array;
 }
 
 export enum VideoColourSpace {

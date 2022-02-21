@@ -3,19 +3,17 @@ require("dotenv/config");
 const { join } = require("path");
 const { ensureSymlinkSync } = require("fs-extra");
 
-const { VENDOR_DIR_NAME = ".vendor" } = process.env;
+const VENDOR_DIR_NAME = ".vendor";
 
 function exportNDIPaths() {
   const DIR_NAME = join(VENDOR_DIR_NAME, "ndi");
 
-  const { NDI_SDK_DIR, NDI_SDK_LIB } = process.env;
-
-  ensureSymlinkSync(join(NDI_SDK_DIR, "include"), join(DIR_NAME, "include"));
-  ensureSymlinkSync(join(NDI_SDK_DIR, NDI_SDK_LIB), join(DIR_NAME, "lib"));
+  const raspberry_version = process.env.raspberry_version;
+  const arch = process.env.ARCH ?? process.arch;
 
   return {
     dir: DIR_NAME,
-    lib_dir: join(DIR_NAME, "lib"),
+    lib_dir: join(DIR_NAME, "lib", process.platform, process.platform !== 'darwin' ? `${arch}${raspberry_version ? `-${raspberry_version}` : ''}` : '.'),
     include_dir: join(DIR_NAME, "include"),
   };
 }
@@ -25,6 +23,10 @@ function exportNodeGypPaths() {
 
   const { NODE_GYP_DIR } = process.env;
 
+  if (NODE_GYP_DIR === undefined) {
+    return {};
+  }
+
   ensureSymlinkSync(NODE_GYP_DIR, DIR_NAME);
 
   return {
@@ -33,7 +35,10 @@ function exportNodeGypPaths() {
   };
 }
 
+const ndiSdk = exportNDIPaths();
+const nodeGyp = exportNodeGypPaths();
+
 module.exports = {
-  ndi_sdk: exportNDIPaths(),
-  node_gyp: exportNodeGypPaths(),
+  ndi_sdk: ndiSdk,
+  node_gyp: nodeGyp,
 };
