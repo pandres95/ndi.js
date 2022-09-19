@@ -6,16 +6,18 @@ This library intends to be a Node.js wrapper for NDI v5 (and following) library.
 
 ## Features
 
+- Find API
+  - [x] Listing Sources
 - Send API
   - [x] Creating Send Instance
   - [x] Sending Video Streams
   - [x] Sending Audio Streams
   - [x] Sending Audio/Video Streams
+- Recv API
+  - [x] Setting Tally
 
 ## Roadmap
 
-- Find API
-  - [ ] Listing Sources
 - Send API
   - [ ] Sending Metadata
   - [ ] Receiving Tally
@@ -23,7 +25,6 @@ This library intends to be a Node.js wrapper for NDI v5 (and following) library.
   - [ ] Receiving Video Streams
   - [ ] Receiving Audio Streams
   - [ ] Receiving Metadata
-  - [ ] Setting Tally
 
 ## Installation
 
