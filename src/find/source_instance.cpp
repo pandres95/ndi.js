@@ -80,6 +80,5 @@ SourceInstance::~SourceInstance() {
     return;
   }
 
-  cout << "~SourceInstance: " << endl;
   NDIlib_recv_destroy(this->ndiRecvInstance);
 }
