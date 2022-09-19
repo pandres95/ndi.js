@@ -6,5 +6,10 @@ const addon = bindings('ndi');
  */
 const SendInstance = addon.SendInstance;
 
-export { SendInstance };
+/**
+ * @type {import('./index').findSources}
+ */
+const findSources = addon.findSources;
+
+export { SendInstance, findSources };
 export * from './structures/video_frame.js';
