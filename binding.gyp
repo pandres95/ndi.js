@@ -8,9 +8,12 @@
             "cflags_cc+": ["-fexceptions"],
             "sources": [
                 "src/ndi.cpp",
+                "src/find/find_sources.cpp",
+                "src/find/source_instance.cpp",
                 "src/send/send_create.cpp",
                 "src/send/send_instance.cpp",
                 "src/structures/audio_frame.cpp",
+                "src/structures/tally_state.cpp",
                 "src/structures/video_frame.cpp",
             ],
             "include_dirs": [
