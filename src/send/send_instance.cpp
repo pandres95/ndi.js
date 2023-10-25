@@ -27,7 +27,7 @@ void SendInstance::Initialize(const Napi::CallbackInfo &info) {
 
   // Initialize sendCreate parameters using the initParameters argument
   try {
-    NDIlib_send_create_t sendCreateParams = (SendCreate)info[0].ToObject();
+    NDIlib_send_create_t sendCreateParams = (SendCreateOptions)info[0].ToObject();
 
     this->ndiSendInstance = NDIlib_send_create(&sendCreateParams);
 

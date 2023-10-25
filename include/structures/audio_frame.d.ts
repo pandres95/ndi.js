@@ -1,3 +1,7 @@
+/**
+ * This structure represents the binary buffers for a multi-channel audio
+ * "frame" (being this frame a second of audio), with a specified sample rate.
+ */
 export interface AudioFrame {
   /**
    * This is the current audio sample rate. For instance, this might be 44100, 48000 or 96000.
@@ -7,7 +11,7 @@ export interface AudioFrame {
 
   /**
    * This is the floating-point audio data in planar format, split in channels,
-   * with each channel being a Float32Array.
+   * with each channel being a {@link Float32Array}.
    *
    * ```js
    * [

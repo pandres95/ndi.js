@@ -3,11 +3,16 @@
 
 using namespace std;
 
-SendCreate::SendCreate(
+/**
+ * Constructs an instance of SendCreateOptions, which holds the
+ * options for creating a `SendInstance`
+ */
+SendCreateOptions::SendCreateOptions(
     const Napi::Object &object)
     : Napi::Object(object) {}
 
-SendCreate::operator NDIlib_send_create_t() const {
+
+SendCreateOptions::operator NDIlib_send_create_t() const {
   NDIlib_send_create_t sendCreateParams;
 
   if (!this->Has("name") || this->Get("name").IsUndefined()) {
