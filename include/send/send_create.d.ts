@@ -1,4 +1,8 @@
-export interface SendCreate {
+/**
+ * This structure holds the options used for creating a send (output) video
+ * source
+ */
+export interface SendCreateOptions {
   /**
    * The name of the send video source.
    */
